@@ -10,10 +10,15 @@
     {% block 'head' %} {% endblock %}
 
     <title>{% block 'titulo' %} {% endblock %}</title>
+
   </head>
   <body>
     <nav class="navbar navbar-dark bg-dark">
-        <a class="navbar-brand" href="{% url 'home' %}">Barra de Navegacão</a>
+        <a class="navbar-brand" href="{% url 'home' %}">Projeto Biblioteca</a>
+        {% if usuario_logado %}
+        <a href="{% url 'sair'%}" class="btn btn-danger">Sair</a>
+        {% endif %}
+
       </nav>
     {% block 'conteudo' %} {% endblock %}
 
