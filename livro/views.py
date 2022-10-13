@@ -43,7 +43,7 @@ def cadastrar_livro(request):
         form = CadastroLivro(request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponse('livro salvo com sucesso')
+            return redirect('/livro/home')
         else:
             return HttpResponse('dados inválidos')
 
