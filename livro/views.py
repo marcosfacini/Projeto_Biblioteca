@@ -11,6 +11,7 @@ def home(request):
         livros = Livros.objects.filter(usuario = usuario)
         form = CadastroLivro()
         form.fields['usuario'].initial = request.session['usuario']
+        form.fields['categoria'].queryset = Categoria.objects.filter(usuario = usuario)
         return render(request, 'home.html', {'livros': livros, 
                                              'usuario_logado': request.session.get('usuario'),
                                              'form': form})
@@ -22,8 +23,11 @@ def ver_livros(request, id):
         livro = Livros.objects.get(id = id)
         categoria_livro = Categoria.objects.filter(usuario = request.session.get('usuario'))
         if request.session['usuario'] == livro.usuario.id:
+            usuario = Usuario.objects.get(id = request.session['usuario'])
             emprestimos = Emprestimos.objects.filter(livro = livro)
             form = CadastroLivro()
+            form.fields['usuario'].initial = request.session['usuario']
+            form.fields['categoria'].queryset = Categoria.objects.filter(usuario = usuario)
             return render(request, 'ver_livro.html', {'livro': livro, 
                                                       'categoria_livro': categoria_livro, 
                                                       'emprestimos': emprestimos, 
