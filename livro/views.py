@@ -10,6 +10,7 @@ def home(request):
         usuario = Usuario.objects.get(id = request.session['usuario'])
         livros = Livros.objects.filter(usuario = usuario)
         form = CadastroLivro()
+        form.fields['usuario'].initial = request.session['usuario']
         return render(request, 'home.html', {'livros': livros, 
                                              'usuario_logado': request.session.get('usuario'),
                                              'form': form})
