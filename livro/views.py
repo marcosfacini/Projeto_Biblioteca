@@ -32,7 +32,9 @@ def ver_livros(request, id):
                                                       'categoria_livro': categoria_livro, 
                                                       'emprestimos': emprestimos, 
                                                       'usuario_logado': request.session.get('usuario'),
-                                                      'form': form})
+                                                      'form': form,
+                                                      'id_livro': id})
+                                                      
         else:
             return HttpResponse('esse livro não é seu')
     else:
@@ -47,5 +49,8 @@ def cadastrar_livro(request):
         else:
             return HttpResponse('dados inválidos')
 
+def excluir_livro(request, id):
+    livro = Livros.objects.get(id = id).delete()
+    return redirect('/livro/home')
         
 
