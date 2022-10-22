@@ -5,6 +5,8 @@ import usuario
 from usuario.models import Usuario
 from .models import Livros, Categoria, Emprestimos
 from .forms import CadastroLivro, CategoriaLivro
+from django.db.models import Q 
+from datetime import datetime
 
 def home(request):
     if request.session.get('usuario'):
@@ -18,6 +20,8 @@ def home(request):
         form_categoria = CategoriaLivro()
         usuarios = Usuario.objects.all()
         livros_emprestar = Livros.objects.filter(usuario = usuario).filter(emprestado = False)
+        livros_emprestados = Livros.objects.filter(usuario = usuario).filter(emprestado = True)
+
 
         return render(request, 'home.html', {'livros': livros, 
                                              'usuario_logado': request.session.get('usuario'),
@@ -26,7 +30,8 @@ def home(request):
                                              'form_categoria': form_categoria,
                                              'usuarios': usuarios,
                                              'livros_emprestar': livros_emprestar,
-                                             'total_livro': total_livros})
+                                             'total_livro': total_livros,
+                                             'livros_emprestados': livros_emprestados})
     else:
         return redirect('/auth/login/?status=2')
 
@@ -45,6 +50,7 @@ def ver_livros(request, id):
             usuarios = Usuario.objects.all()
             livros = Livros.objects.filter(usuario_id = request.session.get('usuario'))
             livros_emprestar = Livros.objects.filter(usuario = usuario).filter(emprestado = False)
+            livros_emprestados = Livros.objects.filter(usuario = usuario).filter(emprestado = True)
 
             return render(request, 'ver_livro.html', {'livro': livro, 
                                                       'categoria_livro': categoria_livro, 
@@ -55,7 +61,8 @@ def ver_livros(request, id):
                                                       'form_categoria': form_categoria,
                                                       'usuarios': usuarios,
                                                       'livros': livros,
-                                                      'livros_emprestar': livros_emprestar})
+                                                      'livros_emprestar': livros_emprestar,
+                                                      'livros_emprestados': livros_emprestados})
                                                       
         else:
             return HttpResponse('esse livro não é seu')
@@ -86,7 +93,7 @@ def cadastrar_categoria(request):
         categoria.save()
         return redirect('/livro/home?cadastro_categoria=1')
     else:
-        return HttpResponse('errrooo usuario espertinho mudando id no inspecionar do front-end')
+        return redirect('/auth/sair')
 
 def cadastrar_emprestimo(request):
     if request.method == 'POST':
@@ -105,6 +112,37 @@ def cadastrar_emprestimo(request):
         livro.emprestado = True 
         livro.save()
 
-        return HttpResponse('emprestimo cadastrado')
+        return redirect('/livro/home')
+
+def devolver_livro(request):
+    id = request.POST.get('id_livro_devolver')
+    livro_devolver = Livros.objects.get(id = id)
+    livro_devolver.emprestado = False
+    livro_devolver.save()
+
+    emprestimo_devolver = Emprestimos.objects.get(Q(livro = livro_devolver) & Q(data_devolucao = None))
+    emprestimo_devolver.data_devolucao = datetime.now()
+    emprestimo_devolver.save()
+
+    return redirect('/livro/home')
+
+def alterar_livro(request):
+    livro_id = request.POST.get('livro_id')
+    nome_livro = request.POST.get('nome_livro')
+    autor = request.POST.get('autor')
+    co_autor = request.POST.get('co_autor')
+    livro = Livros.objects.get(id = livro_id)
+    if livro.usuario.id == request.session['usuario']:
+        livro.nome = nome_livro
+        livro.autor = autor
+        livro.co_autor = co_autor
+        livro.save()
+        return redirect(f'/livro/ver_livros/{livro_id}')
+    else:
+        return redirect('/auth/sair')
+
+
+
+
     
 

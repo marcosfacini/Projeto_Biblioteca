@@ -114,7 +114,7 @@
                 </div>
 
                 <div style="display: none;" id="devolucao">
-                  <form  method="POST">{% csrf_token %}
+                  <form action="{% url 'devolver_livro' %}" method="POST">{% csrf_token %}
                       <select class="form-control" name="id_livro_devolver">
                         
                         {% for livro in livros_emprestados %}
