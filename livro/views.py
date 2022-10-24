@@ -131,15 +131,25 @@ def alterar_livro(request):
     nome_livro = request.POST.get('nome_livro')
     autor = request.POST.get('autor')
     co_autor = request.POST.get('co_autor')
+    categoria_id = request.POST.get('categoria_id')
+
+    categoria = Categoria.objects.get(id = categoria_id)
     livro = Livros.objects.get(id = livro_id)
     if livro.usuario.id == request.session['usuario']:
         livro.nome = nome_livro
         livro.autor = autor
         livro.co_autor = co_autor
+        livro.categoria = categoria
         livro.save()
         return redirect(f'/livro/ver_livros/{livro_id}')
     else:
         return redirect('/auth/sair')
+
+def seus_emprestimos(request):
+    usuario = Usuario.objects.get(id = request.session['usuario'])
+    emprestimos = Emprestimos.objects.filter(nome_emprestado = usuario)
+    return render(request, 'seus_emprestimos.html', {'usuario_logado': request.session['usuario'],
+                                                    'emprestimos': emprestimos})
 
 
 
