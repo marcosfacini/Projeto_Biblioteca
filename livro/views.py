@@ -71,7 +71,7 @@ def ver_livros(request, id):
 
 def cadastrar_livro(request):
     if request.method == 'POST':
-        form = CadastroLivro(request.POST)
+        form = CadastroLivro(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('/livro/home')
