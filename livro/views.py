@@ -147,9 +147,27 @@ def alterar_livro(request):
 
 def seus_emprestimos(request):
     usuario = Usuario.objects.get(id = request.session['usuario'])
+    status_categoria = request.GET.get('cadastro_categoria')
+    livros = Livros.objects.filter(usuario = usuario)
+    total_livros = livros.count()
+    form = CadastroLivro()
+    form.fields['usuario'].initial = request.session['usuario']
+    form.fields['categoria'].queryset = Categoria.objects.filter(usuario = usuario)
+    form_categoria = CategoriaLivro()
+    usuarios = Usuario.objects.all()
+    livros_emprestar = Livros.objects.filter(usuario = usuario).filter(emprestado = False)
+    livros_emprestados = Livros.objects.filter(usuario = usuario).filter(emprestado = True)
     emprestimos = Emprestimos.objects.filter(nome_emprestado = usuario)
     return render(request, 'seus_emprestimos.html', {'usuario_logado': request.session['usuario'],
-                                                    'emprestimos': emprestimos})
+                                                     'livros': livros, 
+                                                     'form': form,
+                                                     'status_categoria': status_categoria,
+                                                     'form_categoria': form_categoria,
+                                                     'usuarios': usuarios,
+                                                     'livros_emprestar': livros_emprestar,
+                                                     'total_livro': total_livros,
+                                                     'livros_emprestados': livros_emprestados,
+                                                     'emprestimos': emprestimos})
 
 def processa_avaliacao(request):
     id_emprestimo = request.POST.get('id_emprestimo')
@@ -157,10 +175,12 @@ def processa_avaliacao(request):
     id_livro = request.POST.get('id_livro')
     
     emprestimo = Emprestimos.objects.get(id = id_emprestimo)
-    emprestimo.avaliacao = opcoes
-    emprestimo.save()
-
-    return redirect(f'/livro/ver_livros/{id_livro}')
+    if emprestimo.livro.usuario.id == request.session['usuario']:
+        emprestimo.avaliacao = opcoes
+        emprestimo.save()
+        return redirect(f'/livro/ver_livros/{id_livro}')
+    else:
+        return redirect('/auth/sair')
 
 
 
