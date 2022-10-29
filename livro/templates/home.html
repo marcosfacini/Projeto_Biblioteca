@@ -19,7 +19,9 @@
             <div class="col-md">
                 <div class="card" style="width: 18rem;">
                     <div class="card-body">
+                      {% if livro.img %}
                       <img width="100%" src="{{livro.img.url}}" >
+                      {% endif %}
                       <h5 class="card-title">{{livro.nome}}</h5>
                      
                      

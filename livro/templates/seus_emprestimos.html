@@ -8,8 +8,8 @@
         {% for emprestimo in emprestimos %}
 
             <div class="cartao">
-
-                <div class="titulo">
+                    {% if emprestimo.livro %}
+                    <div class="titulo">
                     <h3>{{emprestimo.livro}}</h3>
                 </div>
                 <hr>
@@ -24,7 +24,7 @@
                             </svg>&nbspData devolução: {% if emprestimo.data_devolucao %}{{emprestimo.data_devolucao}}{% else %}Ainda não foi devolvido{% endif %}</label>
 
                 
-
+                {% endif %}
                 </div>
                
                
