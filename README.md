@@ -1,1 +1,5 @@
-Projeto de gerenciamento de livros que simula o ambiente de uma biblioteca, onde é possível controlar o cadastro e empréstimo de livros de cada usuário.
+Sistema de gerenciamento de biblioteca online.
+Com funções de:
+- Sistema de cadastro e autenticação de usuários;
+- Gerenciamento de livros com cadastro e exclusão de livros e categorias;
+- Controle de empréstimo e devolução de livros.
